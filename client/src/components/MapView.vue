@@ -9,7 +9,8 @@
               </div>
               <div class="col-md-6">
                 <date-picker v-model="date" lang="en" id="date-picker"
-                valueType="format" format="YYYY-MM-DD"></date-picker>
+                 type="datetime" valueType="format"
+                 format="YYYY-MM-DD HH:mm:ss"></date-picker>
               </div>
             </div>
           </div>
@@ -65,22 +66,41 @@
         </div>
          <hr>
         <div class="row" id="third_row">
-            <div class="col-md-6">
+            <div class="col-md-6 seperate">
               <button type="button" class="button_1 btn btn-dark text"
-              @click="getSubmit($event)"> Submit </button>
+              @click="submitButton($event)"> Submit </button>
           </div>
           <div class="col-md-6">
-            <button type="button" class="button_2 btn btn-dark text"
-            @click="getAnimate($event)"> Animate </button>
+            <div class="row">
+              <p>Animate</p>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <button type="button" class="button_2 btn btn-dark btn-sm text"
+                @click="playButton($event)">Play</button>
+              </div>
+              <div class="col-md-6">
+                <button type="button" class="button_3 btn btn-dark btn-sm text"
+                @click="stopButton($event)">Stop</button>
+              </div>
+            </div>
           </div>
         </div>
         <hr>
-        <h2 id="heading"> </h2>
+        <div class="row">
+          <div class="col-md-9">
+            <h2 id="heading"> </h2>
+          </div>
+          <div class="col-md-3">
+            <h6 id="Future_hour"> </h6>
+          </div>
+        </div>
         <div id="map">
           Here goes the map
         </div>
-        <p id='legend_name' class='legend_head'> </p>
-        <div id="legend"></div>
+        <div id="legend">
+          <p id='legend_name' class='legend_head'> </p>
+        </div>
     </div>
       <div class="col-md-6 border border-dark rounded">
         <AccView/>
@@ -125,12 +145,15 @@ export default {
       ],
       Methods: [
         { name: 'CMAQ' },
-        { name: 'Our_method' },
+        { name: 'OurMethod' },
       ],
-      selected: 'PM25',
+      selected: 'PM10',
       Method_name: 'CMAQ',
-      hour: 0,
-      date: null,
+      buttonName: 'Play',
+      flag: false,
+      array: null,
+      hour: '0',
+      date: '2017-01-02 21:00:00',
       map: null,
       tileLayer: null,
       geodata: [],
@@ -139,7 +162,7 @@ export default {
         { offset: '28.56%', color: '#6dbc90' }, { offset: '42.84%', color: '#4da284' },
         { offset: '57.12%', color: '#36877a' }, { offset: '71.4%', color: '#266b6e' },
         { offset: '100%', color: '#1d4f60' }],
-      extent: [0, 60],
+      extent: [0, 80],
     };
   },
   methods: {
@@ -148,12 +171,6 @@ export default {
       this.tileLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
         { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>' });
       this.tileLayer.addTo(this.map);
-    },
-    changeName() {
-      const head = this.Method_name;
-      const legName = this.selected;
-      document.getElementById('heading').innerHTML = head.concat('  Result');
-      document.getElementById('legend_name').innerHTML = legName.concat('  Concentration');
     },
     drawGrids(response) {
       this.clearLayer();
@@ -171,23 +188,7 @@ export default {
         this.polygon_data.push(polygon);
       });
     },
-    getSubmit() {
-      this.changeName();
-      const path = 'http://127.0.0.1:5000/data';
-      axios.post(path, {
-        pollutants: this.selected,
-        Result_data: this.result_data,
-        Future_hour: this.hour,
-        Date: this.date,
-      })
-        .then((res) => {
-          this.drawGrids(res);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-    getLegend() {
+    drawLegend() {
       const xScale = d3.scaleLinear()
         .range([0, 250 - (9 * 2)])
         .domain(this.extent);
@@ -218,24 +219,55 @@ export default {
         this.map.removeLayer(layer);
       });
     },
-    getAnimate() {
+    submitButton() {
+      this.changeName();
+      this.getdata();
+    },
+    playButton() {
+      this.doAnimation();
+      this.flag = true;
+    },
+    stopButton() {
+      this.flag = false;
+    },
+    getdata() {
       const path = 'http://127.0.0.1:5000/data';
-      const array = this.Pollutant_names;
-      const interval = 2000;
-      array.forEach((el, index) => {
+      axios.post(path, {
+        pollutants: this.selected,
+        Date: this.date,
+        Future_hour: this.hour,
+        Method: this.Method_name,
+      })
+        .then((res) => {
+          this.drawGrids(res);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    doAnimation() {
+      const start = parseInt(this.hour, 16);
+      this.array = Array(12 - start + 1).fill().map((_, idx) => start + idx);
+      console.log(this.array);
+      const interval = 3000;
+      for (let i = 0; i < this.array.length; i += 1) {
         setTimeout(() => {
-          this.selected = el.name;
-          axios.post(path, {
-            pollutants: this.selected,
-          })
-            .then((res) => {
-              this.drawGrids(res);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        }, index * interval);
-      });
+          if (this.flag === true) {
+            console.log(this.array[i]);
+            this.hour = this.array[i];
+            this.changeName();
+            // this.getdata();
+          }
+        }, i * interval);
+      }
+    },
+    changeName() {
+      const head = this.Method_name;
+      const legName = this.selected;
+      const fhName = 'Future_hour: ';
+      document.getElementById('heading').innerHTML = head.concat('  Result');
+      document.getElementById('legend_name').innerHTML = legName.concat('  Concentration');
+      document.getElementById('Future_hour').innerHTML = fhName.concat(this.hour);
     },
     getButtonName(name) {
       this.result_data = name;
@@ -243,8 +275,8 @@ export default {
   },
   mounted() {
     this.initMap();
-    this.getSubmit();
-    this.getLegend();
+    this.submitButton();
+    this.drawLegend();
   },
 };
 </script>
@@ -259,7 +291,7 @@ export default {
   margin-top: 5%;
 }
 #date-picker{
-  width: 130px;
+  width: 173px;
 }
 #date{
   padding-top: 4%;
@@ -278,28 +310,33 @@ export default {
   margin-left: 10%;
   text-align: left;
 }
+#Future_hour{
+  margin-top: 20%;
+}
+#heading{
+  padding-left: 30%;
+}
 /* tags */
 hr{
   margin: 0;
   width: 102%;
 }
 p{
-  text-align: center;
-  margin: 2%;
-}
-.p1{
-  width: 430px;
-  margin-right: 10px;
-  text-align: center;
+  font-weight: bold;
+  margin: 0 155px;
 }
 /* class */
 .button_1{
-  margin: 0 55% ;
+  margin: 5% 0 0 40% ;
   width: 130px;
 }
 .button_2{
-  margin: 0 10%;
-  width: 130px;
+  margin: 0 0 0 40%;
+  width: 80px;
+}
+.button_3{
+  margin: 0 28% 0 0;
+  width: 80px;
 }
 .labels{
   margin-top: 5%;
@@ -312,7 +349,6 @@ p{
   font-size: 17px;
 }
 .legend_head{
-  padding-left: 11%;
   margin: 0;
   text-align: left;
 }

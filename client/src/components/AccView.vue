@@ -177,9 +177,11 @@ h2 {
   fill: none;
   pointer-events: all;
 }
-/* Style the dots by assigning a fill and stroke */
 .dot {
     fill: #ffab00;
     stroke: #fff;
+}
+.p1{
+  text-align: left;
 }
 </style>
