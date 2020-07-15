@@ -151,7 +151,8 @@ export default {
       Method_name: 'CMAQ',
       buttonName: 'Play',
       flag: false,
-      array: null,
+      array: [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+      index: 13,
       hour: '0',
       date: '2017-01-02 21:00:00',
       map: null,
@@ -224,8 +225,8 @@ export default {
       this.getdata();
     },
     playButton() {
-      this.doAnimation();
       this.flag = true;
+      this.doAnimation(this.index);
     },
     stopButton() {
       this.flag = false;
@@ -233,33 +234,34 @@ export default {
     getdata() {
       const path = 'http://127.0.0.1:5000/data';
       axios.post(path, {
+        Method: this.Method_name,
         pollutants: this.selected,
         Date: this.date,
         Future_hour: this.hour,
-        Method: this.Method_name,
       })
         .then((res) => {
+          console.log(res);
           this.drawGrids(res);
         })
         .catch((error) => {
           console.error(error);
         });
     },
-    doAnimation() {
-      const start = parseInt(this.hour, 16);
-      this.array = Array(12 - start + 1).fill().map((_, idx) => start + idx);
-      console.log(this.array);
-      const interval = 3000;
-      for (let i = 0; i < this.array.length; i += 1) {
-        setTimeout(() => {
-          if (this.flag === true) {
-            console.log(this.array[i]);
-            this.hour = this.array[i];
-            this.changeName();
-            // this.getdata();
+    doAnimation(j) {
+      let x = j;
+      setTimeout(() => {
+        if (this.flag === true) {
+          console.log(this.array[x]);
+          this.hour = this.array[x];
+          this.changeName();
+          this.getdata();
+          x -= 1;
+          if (x > 0) {
+            this.index = x;
+            this.doAnimation(x);
           }
-        }, i * interval);
-      }
+        }
+      }, 5000);
     },
     changeName() {
       const head = this.Method_name;
