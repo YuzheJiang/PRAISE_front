@@ -152,7 +152,7 @@ export default {
       buttonName: 'Play',
       flag: false,
       array: [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-      index: 13,
+      index: 12,
       hour: '0',
       date: '2017-01-02 21:00:00',
       map: null,
@@ -180,6 +180,7 @@ export default {
         .domain(this.extent)
         .range(this.colorData.map((d) => d.color));
       this.geodata = response.data;
+      // console.log(this.geodata);
       this.geodata.forEach((layer) => {
         const val = layer.pollutant;
         polygon = L.polygon(layer.coord, {
@@ -240,7 +241,6 @@ export default {
         Future_hour: this.hour,
       })
         .then((res) => {
-          console.log(res);
           this.drawGrids(res);
         })
         .catch((error) => {
@@ -256,7 +256,8 @@ export default {
           this.changeName();
           this.getdata();
           x -= 1;
-          if (x > 0) {
+          if (x >= 0) {
+            console.log(x);
             this.index = x;
             this.doAnimation(x);
           }
