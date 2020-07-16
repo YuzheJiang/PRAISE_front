@@ -155,6 +155,7 @@ export default {
       index: 12,
       hour: '0',
       date: '2017-01-02 21:00:00',
+      oldDate: '2017-01-02 21:00:00',
       map: null,
       tileLayer: null,
       geodata: [],
@@ -166,6 +167,11 @@ export default {
       extent: [0, 80],
     };
   },
+  watch: {
+    date(newValue, oldValue) {
+      this.oldDate = oldValue;
+    },
+  },
   methods: {
     initMap() {
       this.map = L.map('map').setView([22.34385, 114.1289], 10);
@@ -173,15 +179,16 @@ export default {
         { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>' });
       this.tileLayer.addTo(this.map);
     },
-    drawGrids(response) {
+    drawGrids(data) {
       this.clearLayer();
       let polygon;
       const colors = d3.scaleQuantize()
         .domain(this.extent)
         .range(this.colorData.map((d) => d.color));
-      this.geodata = response.data;
-      // console.log(this.geodata);
-      this.geodata.forEach((layer) => {
+      this.geodata = data;
+      console.log(this.hour);
+      this.geodata.forEach((l) => {
+        const layer = l[this.hour];
         const val = layer.pollutant;
         polygon = L.polygon(layer.coord, {
           fillColor: colors(layer.pollutant), color: 'grey', weight: 0, opacity: 0, fillOpacity: 0.5,
@@ -221,9 +228,23 @@ export default {
         this.map.removeLayer(layer);
       });
     },
-    submitButton() {
+    checkCondition() {
       this.changeName();
-      this.getdata();
+      if (this.oldDate === this.date) {
+        this.drawGrids(this.geodata);
+      } else {
+        this.getdata();
+      }
+    },
+    submitButton() {
+      console.log(this.index);
+      if (this.index === 0) {
+        console.log('OMG Yes');
+        this.index = 12;
+      } else {
+        this.index = this.array.indexOf(this.hour);
+      }
+      this.checkCondition();
     },
     playButton() {
       this.flag = true;
@@ -241,7 +262,7 @@ export default {
         Future_hour: this.hour,
       })
         .then((res) => {
-          this.drawGrids(res);
+          this.drawGrids(res.data);
         })
         .catch((error) => {
           console.error(error);
@@ -251,18 +272,15 @@ export default {
       let x = j;
       setTimeout(() => {
         if (this.flag === true) {
-          console.log(this.array[x]);
           this.hour = this.array[x];
-          this.changeName();
-          this.getdata();
+          this.checkCondition();
           x -= 1;
           if (x >= 0) {
-            console.log(x);
             this.index = x;
             this.doAnimation(x);
           }
         }
-      }, 5000);
+      }, 1000);
     },
     changeName() {
       const head = this.Method_name;
@@ -277,8 +295,9 @@ export default {
     },
   },
   mounted() {
+    this.changeName();
     this.initMap();
-    this.submitButton();
+    this.getdata();
     this.drawLegend();
   },
 };
