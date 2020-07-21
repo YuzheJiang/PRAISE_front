@@ -112,7 +112,9 @@ import * as d3 from 'd3';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
+import EventBus from '@/eventBus';
 import AccView from './AccView.vue';
+// import { EventBus } from '../eventBus';
 
 export default {
   name: 'MapView',
@@ -186,7 +188,6 @@ export default {
         .domain(this.extent)
         .range(this.colorData.map((d) => d.color));
       this.geodata = data;
-      console.log(this.hour);
       this.geodata.forEach((l) => {
         const layer = l[this.hour];
         const val = layer.pollutant;
@@ -237,12 +238,11 @@ export default {
       }
     },
     submitButton() {
-      console.log(this.index);
+      EventBus.$emit('clicked-event', this.selected);
       if (this.index === 0) {
-        console.log('OMG Yes');
         this.index = 12;
       } else {
-        this.index = this.array.indexOf(this.hour);
+        this.index = this.array.indexOf(parseInt(this.hour, 10));
       }
       this.checkCondition();
     },
