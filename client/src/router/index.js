@@ -1,14 +1,15 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import MapView from '../components/MapView.vue';
+// import MapView from '../components/MapView.vue';
+import newLayout from '../components/PickerView.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: 'MapView',
-    component: MapView,
+    name: 'PickerView',
+    component: newLayout,
   },
 ];
 

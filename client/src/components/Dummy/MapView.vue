@@ -114,7 +114,6 @@ import L from 'leaflet';
 import axios from 'axios';
 import EventBus from '@/eventBus';
 import AccView from './AccView.vue';
-// import { EventBus } from '../eventBus';
 
 export default {
   name: 'MapView',
@@ -162,10 +161,10 @@ export default {
       tileLayer: null,
       geodata: [],
       polygon_data: [],
-      colorData: [{ offset: '0%', color: '#c4e6c3' }, { offset: '18.28%', color: '#96d2a4' },
-        { offset: '28.56%', color: '#6dbc90' }, { offset: '42.84%', color: '#4da284' },
-        { offset: '57.12%', color: '#36877a' }, { offset: '71.4%', color: '#266b6e' },
-        { offset: '100%', color: '#1d4f60' }],
+      colorData: [{ offset: '0%', color: '#f3e79b' }, { offset: '18.28%', color: '#fac484' },
+        { offset: '28.56%', color: '#f8a07e' }, { offset: '42.84%', color: '#eb7f86' },
+        { offset: '57.12%', color: '#ce6693' }, { offset: '71.4%', color: '#a059a0' },
+        { offset: '100%', color: '#5c53a5' }],
       extent: [0, 80],
     };
   },
