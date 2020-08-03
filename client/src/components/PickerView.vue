@@ -199,6 +199,7 @@ export default {
       start_date: '2017-01-02 21:00:00',
       end_date: '2017-01-03 21:00:00',
       pollutant: 'PM10',
+      old_pollutant: 'PM10',
       new_date: '2017-01-02 21:00:00',
       old_date: '2017-01-02 21:00:00',
     };
@@ -207,10 +208,13 @@ export default {
     new_date(newValue, oldValue) {
       this.old_date = oldValue;
     },
+    pollutant(newValue, oldValue) {
+      this.old_pollutant = oldValue;
+    },
   },
   methods: {
     submitButton1() {
-      EventBus.$emit('clicked-event', this.pollutant, this.hour, this.new_date, this.old_date);
+      EventBus.$emit('clicked-event', this.pollutant, this.old_pollutant, this.hour, this.new_date, this.old_date);
     },
     playButton() {
       EventBus.$emit('play-event', this.pollutant, this.new_date, this.old_date);
@@ -220,11 +224,11 @@ export default {
     },
     submitButton2() {
       console.log('You clicked me!!');
-      EventBus.$emit('submit-event', this.pollutant);
+      EventBus.$emit('submit-event', this.Station_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
     },
   },
   mounted() {
-    EventBus.$emit('clicked-event', this.pollutant, this.hour, this.new_date, this.old_date);
+    EventBus.$emit('clicked-event', this.pollutant, this.old_pollutant, this.hour, this.new_date, this.old_date);
     EventBus.$emit('submit-event', this.Station_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
   },
 };

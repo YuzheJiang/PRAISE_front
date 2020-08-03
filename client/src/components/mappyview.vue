@@ -41,20 +41,14 @@ export default {
       extent: [0, 80],
       array: [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
       index: 12,
-      Method1: 'CMAQ',
-      Method2: 'Our_Method',
       obStation: null,
       map1: null,
       map2: null,
       flag: false,
-      polygon_data: [],
+      polygon_data_1: [],
+      polygon_data_2: [],
       geodata: null,
     };
-  },
-  watch: {
-    date(newValue, oldValue) {
-      this.oldDate = oldValue;
-    },
   },
   methods: {
     initMap() {
@@ -65,33 +59,38 @@ export default {
       L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
         { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>' }).addTo(this.map2);
     },
-    drawGrids(data, hr, map) {
-      if (map === 'CMAQ') {
-        this.mappy = this.map1;
-      } else {
-        this.mappy = this.map2;
-      }
-      this.clearLayer();
-      let polygon;
+    drawGrids(data, hr) {
       const colors = d3.scaleQuantize()
         .domain(this.extent)
         .range(this.colorData.map((d) => d.color));
+      const method = ['CMAQ_data', 'Our_method_data'];
       this.geodata = data;
-      this.geodata.forEach((l) => {
-        const layer = l[hr];
-        const val = layer.pollutant.toFixed(2);
-        const obsVal = layer.Obs_con;
-        if (layer.data === 'Observatory_data') {
-          polygon = L.polygon(layer.coord, {
-            fillColor: 'red', weight: 0, opacity: 0, fillOpacity: 0.5,
-          }).bindTooltip(`${map}: ${val.toString()}\n Obs: ${obsVal.toString()}`);
-        } else {
-          polygon = L.polygon(layer.coord, {
-            fillColor: colors(layer.pollutant), weight: 0, opacity: 0, fillOpacity: 0.5,
-          }).bindTooltip(`${map}: ${val.toString()}`);
-        }
-        polygon.addTo(this.mappy);
-        this.polygon_data.push(polygon);
+      method.forEach((element) => {
+        const name = element;
+        this.clearLayer(name);
+        let polygon;
+        const newData = data.filter(({ Name }) => [name].includes(Name));
+        newData.forEach((l) => {
+          const layer = l[hr];
+          const val = layer.pollutant.toFixed(2);
+          const obsVal = layer.Obs_con;
+          if (layer.data === 'Observatory_data') {
+            polygon = L.polygon(layer.coord, {
+              fillColor: 'red', weight: 0, opacity: 0, fillOpacity: 0.6,
+            }).bindTooltip(`${name}: ${val.toString()}\n Obs: ${obsVal.toString()}`);
+          } else {
+            polygon = L.polygon(layer.coord, {
+              fillColor: colors(layer.pollutant), weight: 0, opacity: 0, fillOpacity: 0.4,
+            }).bindTooltip(`${name}: ${val.toString()}`);
+          }
+          if (name === 'CMAQ_data') {
+            polygon.addTo(this.map1);
+            this.polygon_data_1.push(polygon);
+          } else {
+            polygon.addTo(this.map2);
+            this.polygon_data_2.push(polygon);
+          }
+        });
       });
     },
     drawLegend(divID) {
@@ -120,49 +119,49 @@ export default {
       g.append('g')
         .call(xAxis);
     },
-    clearLayer() {
-      this.polygon_data.forEach((layer) => {
-        this.map1.removeLayer(layer);
-      });
+    clearLayer(methodName) {
+      if (methodName === 'CMAQ_data') {
+        this.polygon_data_1.forEach((layer) => {
+          this.map1.removeLayer(layer);
+        });
+      } else {
+        this.polygon_data_2.forEach((layer) => {
+          this.map2.removeLayer(layer);
+        });
+      }
     },
-    checkCondition(pol, hr, nD, oD, map) {
+    checkCondition(pol, olPol, hr, nD, oD) {
       this.changeName(pol, hr);
-      if (oD === nD) {
-        this.drawGrids(this.geodata, hr, map);
+      if (oD === nD && olPol === pol) {
+        this.drawGrids(this.geodata, hr);
       } else {
         this.getdata(pol, hr, nD);
       }
     },
-    getdata(pol, hr, nD, method) {
+    getdata(pol, hr, nD) {
       const path = 'http://127.0.0.1:5000/data';
       axios.post(path, {
-        Method: method,
         pollutants: pol,
         Date: nD,
         Future_hour: hr,
       })
         .then((res) => {
-          if (method === 'CMAQ') {
-            console.log(res.data);
-            this.drawGrids(res.data, hr, this.Method1);
-          } else {
-            this.drawGrids(res.data, hr, this.Method2);
-          }
+          this.drawGrids(res.data, hr);
         })
         .catch((error) => {
           console.error(error);
         });
     },
-    doAnimation(j, pol, nD, oD) {
+    doAnimation(j, pol, olPol, nD, oD) {
       let x = j;
       setTimeout(() => {
         if (this.flag === true) {
           const hour = this.array[x];
-          this.checkCondition(pol, hour, nD, oD);
+          this.checkCondition(pol, olPol, hour, nD, oD);
           x -= 1;
           if (x >= 0) {
             this.index = x;
-            this.doAnimation(x, pol, nD, oD);
+            this.doAnimation(x, pol, olPol, nD, oD);
           }
         }
       }, 1000);
@@ -173,15 +172,15 @@ export default {
       document.getElementById('legend_name').innerHTML = legName.concat('  Concentration');
       document.getElementById('Future_hour').innerHTML = fhName.concat(hr);
     },
-    submitFunc(pol, hr, nD, oD, map) {
+    submitFunc(pol, olPol, hr, nD, oD) {
       if (this.index === 0) {
         this.index = 12;
       } else {
         this.index = this.array.indexOf(parseInt(hr, 10));
       }
-      this.checkCondition(pol, hr, nD, oD, map);
+      this.checkCondition(pol, olPol, hr, nD, oD);
     },
-    playFunc(pol, nD, oD) {
+    playFunc(pol, olPol, nD, oD) {
       this.flag = true;
       this.doAnimation(this.index, pol, nD, oD);
     },
@@ -192,16 +191,16 @@ export default {
   mounted() {
     this.initMap();
     this.drawLegend('#legend');
-    EventBus.$on('clicked-event', (pollutant, hour, newDate, oldDate) => {
+    EventBus.$on('clicked-event', (pollutant, oldPollutant, hour, newDate, oldDate) => {
       if (this.geodata === null) {
         this.changeName(pollutant, hour);
-        this.getdata(pollutant, hour, newDate, this.Method1);
+        this.getdata(pollutant, hour, newDate);
       } else {
-        this.submitFunc(pollutant, hour, newDate, oldDate, this.Method1);
+        this.submitFunc(pollutant, oldPollutant, hour, newDate, oldDate);
       }
     });
-    EventBus.$on('play-event', (pollutant, newDate, oldDate) => {
-      this.playFunc(pollutant, newDate, oldDate);
+    EventBus.$on('play-event', (pollutant, oldPollutant, newDate, oldDate) => {
+      this.playFunc(pollutant, oldPollutant, newDate, oldDate);
     });
     EventBus.$on('stop-event', () => {
       this.stopFunc();
