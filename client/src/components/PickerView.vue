@@ -33,7 +33,7 @@
             </div>
             <div class="row" id='third_row'>
               <div class="col-md-6 seperate">
-                <label class="labels text">Future Hour:</label>
+                <label class="labels text">Future Hour (Poll_conc. Map):</label>
               </div>
               <div class="col-md-6">
                 <select name="Please select a pollutant"
@@ -112,7 +112,7 @@
             </div>
             <div class="row" id='fourth_row'>
               <div class="col-md-6 seperate">
-                <label class="labels text">Future Hour:</label>
+                <label class="labels text">Future Hour (LineChart):</label>
               </div>
               <div class="col-md-6">
                 <select name="Please select a pollutant"
@@ -133,23 +133,23 @@
         </div>
       </div>
       <div class="col-md-5 border border-dark rounded column_class">
-          <mappyview/>
+          <MapView/>
       </div>
       <div class="col-md-4 border border-dark rounded column_class">
-          <accyview/>
+          <AccView/>
       </div>
   </div>
 </template>
 <script>
 import EventBus from '@/eventBus';
-import mappyview from './mappyview.vue';
-import accyview from './accyview.vue';
+import MapView from './Mapview.vue';
+import AccView from './Accview.vue';
 
 export default {
   name: 'PickerView',
   components: {
-    mappyview,
-    accyview,
+    MapView,
+    AccView,
   },
   data() {
     return {
@@ -196,8 +196,8 @@ export default {
       hour: '0',
       F_hr: '0',
       Station_code: 'CB_R',
-      start_date: '2017-01-02 21:00:00',
-      end_date: '2017-01-03 21:00:00',
+      start_date: '2017-02-02 21:00:00',
+      end_date: '2017-02-10 21:00:00',
       pollutant: 'PM10',
       old_pollutant: 'PM10',
       new_date: '2017-01-02 21:00:00',
@@ -217,19 +217,19 @@ export default {
       EventBus.$emit('clicked-event', this.pollutant, this.old_pollutant, this.hour, this.new_date, this.old_date);
     },
     playButton() {
-      EventBus.$emit('play-event', this.pollutant, this.new_date, this.old_date);
+      EventBus.$emit('play-event', this.pollutant, this.old_pollutant, this.new_date, this.old_date);
     },
     stopButton() {
       EventBus.$emit('stop-event');
     },
     submitButton2() {
-      console.log('You clicked me!!');
       EventBus.$emit('submit-event', this.Station_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
     },
   },
   mounted() {
     EventBus.$emit('clicked-event', this.pollutant, this.old_pollutant, this.hour, this.new_date, this.old_date);
-    EventBus.$emit('submit-event', this.Station_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
+    EventBus.$emit('submit-event', this.Station_code,
+      this.pollutant, this.start_date, this.end_date, this.F_hr);
   },
 };
 </script>
