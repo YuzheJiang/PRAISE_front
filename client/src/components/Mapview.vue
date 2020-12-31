@@ -79,11 +79,7 @@ export default {
           this.geodata.forEach((layer) => {
             polygon = L.polygon(layer.coord, {
               color: 'lightgrey',
-<<<<<<< HEAD:client/src/components/Mapview.vue
               opacity: 0.0,
-=======
-              opacity: 0.1,
->>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/mappyview.vue
               x: layer.x,
               y: layer.y,
             });
@@ -121,10 +117,6 @@ export default {
         Date: newDate,
       })
         .then((res) => {
-<<<<<<< HEAD:client/src/components/Mapview.vue
-          console.log(res.data);
-=======
->>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/mappyview.vue
           this.colorMap(res.data, pollutant, hour);
         })
         .catch((error) => {
@@ -156,11 +148,7 @@ export default {
             const index = j + m;
             const val = newData[i][j].toFixed(2);
             polygonData[index].setStyle({
-<<<<<<< HEAD:client/src/components/Mapview.vue
               fillColor: null, color: colors(val), fillOpacity: 0.4,
-=======
-              fillColor: colors(val), color: null, fillOpacity: 0.4,
->>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/mappyview.vue
             }).bindTooltip(`${name}: ${val.toString()}`);
           }
           m += 64;
@@ -169,7 +157,6 @@ export default {
           const value = newData[element.y][element.x].toFixed(2);
           polygonData.forEach((layer) => {
             if (element.x === layer.options.x && element.y === layer.options.y) {
-<<<<<<< HEAD:client/src/components/Mapview.vue
               const error = (value - element.Pollutant.toFixed(2)).toFixed(2);
               if (element.Pollutant.toFixed(2) > value) {
                 layer.setStyle({
@@ -181,17 +168,6 @@ export default {
                   fillColor: 'red', color: 'blue', fillOpacity: 0.5,
                 }).bindTooltip(`${name}: ${value.toString()} OBS:
         ${element.Pollutant.toFixed(2).toString()} <br>Error: ${error}`);
-=======
-              const error = (element.Pollutant.toFixed(2) - value).toFixed(2);
-              if (element.Pollutant.toFixed(2) > value) {
-                layer.setStyle({
-                  fillColor: 'blue', color: null, fillOpacity: 0.4,
-                }).bindTooltip(`${name}: ${value.toString()} OBS: ${element.Pollutant.toFixed(2).toString()} <br>Error: ${error}`);
-              } else {
-                layer.setStyle({
-                  fillColor: 'yellow', color: null, fillOpacity: 0.4,
-                }).bindTooltip(`${name}: ${value.toString()} OBS: ${element.Pollutant.toFixed(2).toString()} <br>Error: ${error}`);
->>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/mappyview.vue
               }
             }
           });
@@ -224,7 +200,6 @@ export default {
       g.append('g')
         .call(xAxis);
     },
-<<<<<<< HEAD:client/src/components/Mapview.vue
     drawLegend2(divID) {
       const svg = d3.select(divID)
         .append('svg')
@@ -247,8 +222,6 @@ export default {
           .text(l.name);
       });
     },
-=======
->>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/mappyview.vue
     clearColor() {
       this.polygon_data_1.forEach((element) => {
         element.setStyle({ fillColor: null });
@@ -301,10 +274,7 @@ export default {
   mounted() {
     this.initMap();
     this.drawLegend('#legend');
-<<<<<<< HEAD:client/src/components/Mapview.vue
     this.drawLegend2('#legend_2');
-=======
->>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/mappyview.vue
     this.drawGrids('CMAQ');
     this.drawGrids('Our_Method');
     EventBus.$on('clicked-event', (pollutant, oldPollutant, hour, newDate, oldDate) => {
