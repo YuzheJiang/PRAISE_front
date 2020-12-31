@@ -33,7 +33,7 @@
             </div>
             <div class="row" id='third_row'>
               <div class="col-md-6 seperate">
-                <label class="labels text">Future Hour:</label>
+                <label class="labels text">Future Hour (Poll_conc. Map):</label>
               </div>
               <div class="col-md-6">
                 <select name="Please select a pollutant"
@@ -110,9 +110,23 @@
                 </select>
               </div>
             </div>
+            <div class="row" id='fifth_row'>
+              <div class="col-md-6 seperate">
+                <label class="labels text">On_Site:</label>
+              </div>
+              <div class="col-md-6">
+                <select name="Please select a station"
+                  id="filter_option" v-model="Onsite_code">
+                  <option v-for="Onsite_code in Onsite_codes"
+                        v-bind:key="Onsite_code.code">
+                        {{ Onsite_code.code }}
+                  </option>
+                </select>
+              </div>
+            </div>
             <div class="row" id='fourth_row'>
               <div class="col-md-6 seperate">
-                <label class="labels text">Future Hour:</label>
+                <label class="labels text">Future Hour (LC):</label>
               </div>
               <div class="col-md-6">
                 <select name="Please select a pollutant"
@@ -133,32 +147,32 @@
         </div>
       </div>
       <div class="col-md-5 border border-dark rounded column_class">
-          <mappyview/>
+          <MapView/>
       </div>
       <div class="col-md-4 border border-dark rounded column_class">
-          <accyview/>
+          <AccView/>
       </div>
   </div>
 </template>
 <script>
 import EventBus from '@/eventBus';
-import mappyview from './mappyview.vue';
-import accyview from './accyview.vue';
+import MapView from './Mapview.vue';
+import AccView from './Accview.vue';
 
 export default {
   name: 'PickerView',
   components: {
-    mappyview,
-    accyview,
+    MapView,
+    AccView,
   },
   data() {
     return {
       Pollutant_names: [
-        { name: 'NO2' },
-        { name: 'O3' },
-        { name: 'PM10' },
-        { name: 'PM25' },
-        { name: 'SO2' },
+        { name: 'NO2 (ppb)' },
+        { name: 'O3 (ppb)' },
+        { name: 'PM10 (ug/m3)' },
+        { name: 'PM25 (ug/m3)' },
+        { name: 'SO2 (ppb)' },
       ],
       Future_hours: [
         { hour: '0' },
@@ -193,15 +207,53 @@ export default {
         { code: 'TW_A' },
         { code: 'YL_A' },
       ],
+      Onsite_codes: [
+        { code: 'S0021 (曾璧山中學)' },
+        { code: 'S0009 (德貞女子中學)' },
+        { code: 'S0008 (嘉諾撒聖瑪利書院)' },
+        { code: 'S0020 (東華三院馬錦燦紀念小學)' },
+        { code: 'C0005 (Exchange Tower)' },
+        { code: 'S0022 (佛教大光慈航中學)' },
+        { code: 'S0023 (聖若瑟英文小學)' },
+        { code: 'S0027 (香港國際學校 (淺水灣校園))' },
+        { code: 'C0001 (Citywalk)' },
+        { code: 'S0018 (元朗官立小學)' },
+        { code: 'S0024 (沙田崇真中學)' },
+        { code: 'S0030 (嘉諾撒培德書院)' },
+        { code: 'S0025 (沙田官立中學)' },
+        { code: 'S0019 (鳳溪廖萬石堂中學)' },
+        { code: 'C0003a (Sino Plaza)' },
+        { code: 'C0002d (TAL Building)' },
+        { code: 'C0003b (Sino Plaza)' },
+        { code: 'C0002c (TAL Building)' },
+        { code: 'C0002b (TAL Building)' },
+        { code: 'S0014 (東華三院鄺錫坤伉儷中學)' },
+        { code: 'S0028 (天主教明德學校)' },
+        { code: 'S0029 (香港國際學校 (大潭校園))' },
+        { code: 'S0015 (道教青松小學 (湖景邨))' },
+        { code: 'S0001 (基督教聖約教會堅樂第二小學)' },
+        { code: 'S0017 (元朗商會中學)' },
+        { code: 'S0003 (九龍塘學校（中學部))' },
+        { code: 'S0002 (福建中學附屬學校)' },
+        { code: 'S0016 (黃大仙天主教小學)' },
+        { code: 'S0012 (ESF Beacon Hill primary school)' },
+        { code: 'C0004a (Hong Kong Pacific Center)' },
+        { code: 'S0013 (東涌天主教中學)' },
+        { code: 'S0011 (寶血會思源學校)' },
+        { code: 'S0010 (東華三院高可寧紀念小學)' },
+        { code: 'C0004b (Hong Kong Pacific Center)' },
+        { code: 'S0004 (西貢崇真天主教學校（中學部))' },
+      ],
       hour: '0',
       F_hr: '0',
       Station_code: 'CB_R',
-      start_date: '2017-01-02 21:00:00',
-      end_date: '2017-01-03 21:00:00',
-      pollutant: 'PM10',
-      old_pollutant: 'PM10',
-      new_date: '2017-01-02 21:00:00',
-      old_date: '2017-01-02 21:00:00',
+      Onsite_code: 'C0002c (TAL Building)',
+      start_date: '2017-02-02 21:00:00',
+      end_date: '2017-02-10 21:00:00',
+      pollutant: 'PM10 (ug/m3)',
+      old_pollutant: 'PM10 (ug/m3)',
+      new_date: '2017-02-02 21:00:00',
+      old_date: '2017-02-02 21:00:00',
     };
   },
   watch: {
@@ -215,21 +267,27 @@ export default {
   methods: {
     submitButton1() {
       EventBus.$emit('clicked-event', this.pollutant, this.old_pollutant, this.hour, this.new_date, this.old_date);
+      EventBus.$emit('submit-event', this.Station_code, this.Onsite_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
     },
     playButton() {
-      EventBus.$emit('play-event', this.pollutant, this.new_date, this.old_date);
+      EventBus.$emit('play-event', this.pollutant, this.old_pollutant, this.new_date, this.old_date);
     },
     stopButton() {
       EventBus.$emit('stop-event');
     },
     submitButton2() {
-      console.log('You clicked me!!');
-      EventBus.$emit('submit-event', this.Station_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
+      if (this.pollutant === 'SO2') {
+        alert('No ONSITE data available for SO2');
+        EventBus.$emit('submit-event', this.Station_code, this.Onsite_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
+      } else {
+        EventBus.$emit('submit-event', this.Station_code, this.Onsite_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
+      }
     },
   },
   mounted() {
     EventBus.$emit('clicked-event', this.pollutant, this.old_pollutant, this.hour, this.new_date, this.old_date);
-    EventBus.$emit('submit-event', this.Station_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
+    EventBus.$emit('submit-event', this.Station_code,
+      this.Onsite_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
   },
 };
 </script>
@@ -273,7 +331,7 @@ p{
   width: 60px;
 }
 .button_4{
-  margin: 3% 25% 3% 30% ;
+  margin: 1% 25% 3% 30% ;
   width: 130px;
 }
 .labels{
@@ -286,7 +344,7 @@ p{
     height: 100vh;
 }
 /* id */
-#first_row,#second_row,#third_row,#fourth_row{
+#first_row,#second_row,#third_row,#fourth_row,#fifth_row{
   padding: 1% 0 1% 2%;
   text-align: left;
 }
