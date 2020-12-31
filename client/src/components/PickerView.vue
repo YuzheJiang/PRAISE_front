@@ -126,7 +126,11 @@
             </div>
             <div class="row" id='fourth_row'>
               <div class="col-md-6 seperate">
+<<<<<<< HEAD
                 <label class="labels text">Future Hour (LC):</label>
+=======
+                <label class="labels text">Future Hour (LineChart):</label>
+>>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33
               </div>
               <div class="col-md-6">
                 <select name="Please select a pollutant"
@@ -247,6 +251,7 @@ export default {
       hour: '0',
       F_hr: '0',
       Station_code: 'CB_R',
+<<<<<<< HEAD
       Onsite_code: 'C0002c (TAL Building)',
       start_date: '2017-02-02 21:00:00',
       end_date: '2017-02-10 21:00:00',
@@ -254,6 +259,14 @@ export default {
       old_pollutant: 'PM10 (ug/m3)',
       new_date: '2017-02-02 21:00:00',
       old_date: '2017-02-02 21:00:00',
+=======
+      start_date: '2017-02-02 21:00:00',
+      end_date: '2017-02-10 21:00:00',
+      pollutant: 'PM10',
+      old_pollutant: 'PM10',
+      new_date: '2017-01-02 21:00:00',
+      old_date: '2017-01-02 21:00:00',
+>>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33
     };
   },
   watch: {
@@ -276,18 +289,26 @@ export default {
       EventBus.$emit('stop-event');
     },
     submitButton2() {
+<<<<<<< HEAD
       if (this.pollutant === 'SO2') {
         alert('No ONSITE data available for SO2');
         EventBus.$emit('submit-event', this.Station_code, this.Onsite_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
       } else {
         EventBus.$emit('submit-event', this.Station_code, this.Onsite_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
       }
+=======
+      EventBus.$emit('submit-event', this.Station_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
+>>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33
     },
   },
   mounted() {
     EventBus.$emit('clicked-event', this.pollutant, this.old_pollutant, this.hour, this.new_date, this.old_date);
     EventBus.$emit('submit-event', this.Station_code,
+<<<<<<< HEAD
       this.Onsite_code, this.pollutant, this.start_date, this.end_date, this.F_hr);
+=======
+      this.pollutant, this.start_date, this.end_date, this.F_hr);
+>>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33
   },
 };
 </script>

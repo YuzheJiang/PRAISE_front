@@ -68,6 +68,7 @@ export default {
       document.getElementById('IOA_1').innerHTML = ioaName.concat(response.data[0].IOA).fontsize(2);
       document.getElementById('RMSE_2').innerHTML = rmseName2.concat(response.data[0].RMSE_our).fontsize(2);
       document.getElementById('IOA_2').innerHTML = ioaName2.concat(response.data[0].IOA_our).fontsize(2);
+<<<<<<< HEAD:client/src/components/Accview.vue
     },
     changeValues2(response) {
       const rmseName = 'RMSE_CM: ';
@@ -78,6 +79,8 @@ export default {
       document.getElementById('IOA_1_on').innerHTML = ioaName.concat(response.data[0].IOA).fontsize(2);
       document.getElementById('RMSE_2_on').innerHTML = rmseName2.concat(response.data[0].RMSE_our).fontsize(2);
       document.getElementById('IOA_2_on').innerHTML = ioaName2.concat(response.data[0].IOA_our).fontsize(2);
+=======
+>>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/accyview.vue
     },
     getLineChart(divID, svgID, response) {
       d3.select(`#${svgID}`).remove();
@@ -167,14 +170,23 @@ export default {
           this.getLineChart('#lineChart2', 'chart2', res);
           this.changeValues2(res);
         });
+<<<<<<< HEAD:client/src/components/Accview.vue
+=======
+      // this.getLegend('#legend_on', 'Onsite_data');
+>>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/accyview.vue
     },
   },
   mounted() {
     this.getLegend('#legend_obs', 'OBS_data');
+<<<<<<< HEAD:client/src/components/Accview.vue
     this.getLegend('#legend_on', 'Onsite_data');
     EventBus.$on('submit-event', (stationCode, onsiteCode, pollutant, startDate, endDate, FutHour) => {
       this.renderChart1(stationCode, onsiteCode, pollutant, startDate, endDate, FutHour);
       this.renderChart2(stationCode, onsiteCode, pollutant, startDate, endDate, FutHour);
+=======
+    EventBus.$on('submit-event', (stationCode, pollutant, startDate, endDate, FutHour) => {
+      this.renderChart1(stationCode, pollutant, startDate, endDate, FutHour);
+>>>>>>> 357517f21ba1e7500995d786f6f80f3273603e33:client/src/components/accyview.vue
     });
   },
 };
